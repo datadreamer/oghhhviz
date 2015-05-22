@@ -115,7 +115,8 @@ def songPost(r):
 			c.execute("UPDATE submissions SET score=\'" + str(score) + "\', lastupdate=\'" + str(time.time()) + "\'")
 		else:
 			# download thumbnail
-			saveThumb(thumbnail, name)
+			if thumbnail != "default":
+				saveThumb(thumbnail, name)
 			c.execute("INSERT INTO submissions (name, dt, title, user, lastupdate, score, url, artist, trackname, year, flair) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (name, dt, title, user, time.time(), score, url, artist, trackname, year, flair))
 		conn.commit()
 		cleanCount += 1
