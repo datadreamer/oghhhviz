@@ -1,11 +1,11 @@
-#!/usr/bin/python
+#!/home/asiegel/dev/bin/python
 
 import praw
 import time
 import re
-import html
-#import MySQLdb
-import urllib.request
+import HTMLParser #import html
+import MySQLdb
+import urllib
 from unidecode import unidecode
 from pprint import pprint
 
@@ -15,8 +15,8 @@ selfCount = 0    # self submissions
 otherCount = 0   # other types of submissions
 cleanCount = 0   # clean scraped song submissions
 
-#conn = MySQLdb.connect(host="localhost", user="asiegel_web", passwd="buttslol!", db="asiegel_oghhhviz")
-#c = conn.cursor()
+conn = MySQLdb.connect(host="localhost", user="asiegel_web", passwd="buttslol!", db="asiegel_oghhhviz")
+c = conn.cursor()
 
 def list():
 	global count
@@ -31,10 +31,22 @@ def list():
 		else:
 			otherPost(r)
 		count += 1
-		pprint(vars(r))
-		break
 	print("total posts: "+ str(count) +", self posts: "+ str(selfCount) +", song posts: "+ str(songCount) +", other posts: "+ str(otherCount))
 	print("clean data posts: "+ str(cleanCount))
+
+def otherPost(r):
+	global otherCount
+	#title = html.unescape(str(unidecode(r.title)))
+	#print(title)
+	otherCount += 1
+
+def saveThumb(thumbnail, name):
+	#with urllib.urlopen(thumbnail) as url:
+	url = urllib.urlopen(thumbnail);
+	f = open("thumbs/"+name+".jpg", "wb")
+	f.write(url.read())
+	f.close()
+	time.sleep(2)
 
 def selfPost(r):
 	global selfCount
@@ -47,7 +59,9 @@ def songPost(r):
 	global conn
 	dt = int(r.created_utc)
 	name = r.name
-	title = html.unescape(str(unidecode(r.title)))
+	#title = html.unescape(str(unidecode(r.title)))
+	h = HTMLParser.HTMLParser()
+	title = h.unescape(str(unidecode(r.title)))
 
 	# artist, trackname, year
 	year = -1
@@ -75,40 +89,39 @@ def songPost(r):
 	except:
 		pass
 
+	# get username if their account still exists
 	user = ""
 	try:
 		user = r.author.name
 	except:
 		pass
+
 	score = r.score
 	url = r.url
 	thumbnail = r.thumbnail
 
-	# download thumbnail
-	try:
-		with urllib.request.urlopen(thumbnail) as url:
-			f = open(name+".jpg", "wb")
-			f.write(url.read())
-			f.close()
-	except:
-		pass
+	# get link flair if it exists
+	flair = ""
+	if r.link_flair_text != None:
+		flair = r.link_flair_text
 
 	if year > 0 and len(artist) > 0 and len(trackname) > 0:
 		#print(title)
-		#print(str(songCount) +": "+ artist +" - "+ trackname +" ["+ str(year) +"], "+ user +", "+ str(score))
-		# TODO: check for submission in database; update if existing, insert if new
-		#c.execute("INSERT INTO submissions (name, dt, title, user, score, url, thumb, artist, trackname, year, flair) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (name, dt, title, user, score, url, thumb, artist, trackname, year, flair))
-		#conn.commit()
+		print(str(songCount) +": "+ artist +" - "+ trackname +" ["+ str(year) +"], "+ user +", "+ str(score))
+		# check for submission in database; update if existing, insert if new
+		c.execute("SELECT * FROM submissions WHERE name = \'" + name + "\'")
+		results = c.fetchmany()
+		if len(results) > 0:
+			c.execute("UPDATE submissions SET score=\'" + str(score) + "\', lastupdate=\'" + str(time.time()) + "\'")
+		else:
+			# download thumbnail
+			saveThumb(thumbnail, name)
+			c.execute("INSERT INTO submissions (name, dt, title, user, lastupdate, score, url, artist, trackname, year, flair) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (name, dt, title, user, time.time(), score, url, artist, trackname, year, flair))
+		conn.commit()
 		cleanCount += 1
 	else:
 		print(title)
 	songCount += 1
-	
-def otherPost(r):
-	global otherCount
-	#title = html.unescape(str(unidecode(r.title)))
-	#print(title)
-	otherCount += 1
 
 
 reddit = praw.Reddit(user_agent="OGHHHViz (by /u/datadreamer)")
