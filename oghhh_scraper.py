@@ -4,6 +4,8 @@ import praw
 import time
 import re
 import html
+#import MySQLdb
+import urllib.request
 from unidecode import unidecode
 from pprint import pprint
 
@@ -12,6 +14,9 @@ songCount = 0    # youtube submissions
 selfCount = 0    # self submissions
 otherCount = 0   # other types of submissions
 cleanCount = 0   # clean scraped song submissions
+
+#conn = MySQLdb.connect(host="localhost", user="asiegel_web", passwd="buttslol!", db="asiegel_oghhhviz")
+#c = conn.cursor()
 
 def list():
 	global count
@@ -26,8 +31,8 @@ def list():
 		else:
 			otherPost(r)
 		count += 1
-		#pprint(vars(r))
-		#break
+		pprint(vars(r))
+		break
 	print("total posts: "+ str(count) +", self posts: "+ str(selfCount) +", song posts: "+ str(songCount) +", other posts: "+ str(otherCount))
 	print("clean data posts: "+ str(cleanCount))
 
@@ -38,6 +43,8 @@ def selfPost(r):
 def songPost(r):
 	global songCount
 	global cleanCount
+	global c
+	global conn
 	dt = int(r.created_utc)
 	name = r.name
 	title = html.unescape(str(unidecode(r.title)))
@@ -76,12 +83,22 @@ def songPost(r):
 	score = r.score
 	url = r.url
 	thumbnail = r.thumbnail
-	# TODO: download thumbnail
+
+	# download thumbnail
+	try:
+		with urllib.request.urlopen(thumbnail) as url:
+			f = open(name+".jpg", "wb")
+			f.write(url.read())
+			f.close()
+	except:
+		pass
 
 	if year > 0 and len(artist) > 0 and len(trackname) > 0:
 		#print(title)
 		#print(str(songCount) +": "+ artist +" - "+ trackname +" ["+ str(year) +"], "+ user +", "+ str(score))
 		# TODO: check for submission in database; update if existing, insert if new
+		#c.execute("INSERT INTO submissions (name, dt, title, user, score, url, thumb, artist, trackname, year, flair) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (name, dt, title, user, score, url, thumb, artist, trackname, year, flair))
+		#conn.commit()
 		cleanCount += 1
 	else:
 		print(title)
