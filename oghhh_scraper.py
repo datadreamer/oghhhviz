@@ -99,6 +99,8 @@ def songPost(r):
 	score = r.score
 	url = r.url
 	thumbnail = r.thumbnail
+	# ensure the title string is cleared of unicode nonsense for the database
+	title = title.encode("utf8", "ignore")
 
 	# get link flair if it exists
 	flair = ""
@@ -117,7 +119,10 @@ def songPost(r):
 			# download thumbnail
 			if thumbnail != "default":
 				saveThumb(thumbnail, name)
-			c.execute("INSERT INTO submissions (name, dt, title, user, lastupdate, score, url, artist, trackname, year, flair) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (name, dt, title, user, time.time(), score, url, artist, trackname, year, flair))
+			try:
+				c.execute("INSERT INTO submissions (name, dt, title, user, lastupdate, score, url, artist, trackname, year, flair) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (name, dt, title, user, time.time(), score, url, artist, trackname, year, flair))
+			except:
+				print("FUCKED UP PARSING: "+title)
 		conn.commit()
 		cleanCount += 1
 	else:
