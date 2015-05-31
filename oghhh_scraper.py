@@ -31,8 +31,7 @@ def list():
 		else:
 			otherPost(r)
 		count += 1
-	print("total posts: "+ str(count) +", self posts: "+ str(selfCount) +", song posts: "+ str(songCount) +", other posts: "+ str(otherCount))
-	print("clean data posts: "+ str(cleanCount))
+	print("total posts: "+ str(count) +", self posts: "+ str(selfCount) +", song posts: "+ str(songCount) +", other posts: "+ str(otherCount)+", clean song posts: "+ str(cleanCount))
 
 def otherPost(r):
 	global otherCount
@@ -114,7 +113,7 @@ def songPost(r):
 		c.execute("SELECT * FROM submissions WHERE name = \'" + name + "\'")
 		results = c.fetchmany()
 		if len(results) > 0:
-			c.execute("UPDATE submissions SET score=\'" + str(score) + "\', lastupdate=\'" + str(time.time()) + "\'")
+			c.execute("UPDATE submissions SET score=\'" + str(score) + "\', lastupdate=\'" + str(int(time.time())) + "\' WHERE name = \'" + name + "\'")
 		else:
 			# download thumbnail
 			if thumbnail != "default":
@@ -126,7 +125,8 @@ def songPost(r):
 		conn.commit()
 		cleanCount += 1
 	else:
-		print(title)
+		#print(title)
+		pass
 	songCount += 1
 
 
