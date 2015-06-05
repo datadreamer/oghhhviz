@@ -43,5 +43,6 @@ Temporary Items
 .apdisk
 
 # data and web-export directories from processing.js sketch
-oghhhviz/data
-oghhhviz/web-export
+thumbs
+submissions.csv
+submissions.json
