@@ -14,11 +14,10 @@ function Submission(data){
   this.y = height + random(height);
   this.w = 20;//70;
   this.h = 15;//52;
-  //this.h = this.score * 3
-  this.a = 255;
 
   // animation variables
   this.moving = false;
+  this.scaling = false;
 }
 
 Submission.prototype = {
@@ -27,6 +26,7 @@ Submission.prototype = {
   draw:function(){
     if(this.thumb != undefined){
       this.handleMoving();
+      this.handleScaling();
       //image(this.thumb, this.x, this.y, this.w, this.h);
       fill(150 - (this.score / scoreHigh) * 150, 255, 255);
       rect(this.x, this.y, this.w, this.h);
@@ -46,6 +46,20 @@ Submission.prototype = {
         var pos = this.moveTimer.sinProgress();
         this.x = this.pastx + ((this.targetx - this.pastx) * pos);
         this.y = this.pasty + ((this.targety - this.pasty) * pos);
+      }
+    }
+  },
+
+  handleScaling:function(){
+    if(this.scaling){
+      if(this.scaleTimer.isFinished()){
+        this.w = this.targetw;
+        this.h = this.targeth;
+        this.scaling = false;
+      } else {
+        var pos = this.scaleTimer.sinProgress();
+        this.w = this.pastw + ((this.targetw - this.pastw) * pos);
+        this.h = this.pasth + ((this.targeth - this.pasth) * pos);
       }
     }
   },
@@ -73,5 +87,15 @@ Submission.prototype = {
     this.moveTimer = new Timer(duration);
     this.moveTimer.start();
     this.moving = true;
+  },
+
+  scaleTo:function(targetw, targeth, duration){
+    this.targetw = targetw;
+    this.targeth = targeth;
+    this.pastw = this.w;
+    this.pasth = this.h;
+    this.scaleTimer = new Timer(duration);
+    this.scaleTimer.start();
+    this.scaling = true;
   }
 }

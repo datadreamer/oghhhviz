@@ -57,21 +57,26 @@ function setup(){
 };
 
 function displayByYearAndScore(){
-  // sort by year and stack bars by score
+  // sort by year and stack bars by score/age
   print("displayByYearAndScore");
   submissions.sort(sortByYearAndScore);
   var currentYear = yearLow;
   for(var i=0; i<submissions.length; i++){
     var tx = margin + ((submissions[i].year - yearLow) / (yearHigh-yearLow)) * (width - (margin*2));
     var ty = 0;
+    if(sortmode){
+      submissions[i].scaleTo(20, submissions[i].score * 3, 2000);
+    } else {
+      submissions[i].scaleTo(20, 15, 2000);
+    }
     if(submissions[i].year != currentYear){
       currentYear = submissions[i].year;
-      ty = height - margin - submissions[i].h/2;
+      ty = height - margin - submissions[i].targeth/2;
     } else {
       if(i > 0){
-        ty = (submissions[i-1].targety - submissions[i-1].h/2) - submissions[i].h/2;
+        ty = (submissions[i-1].targety - submissions[i-1].targeth/2) - submissions[i].targeth/2;
       } else {
-        ty = height - margin - submissions[i].h/2;
+        ty = height - margin - submissions[i].targeth/2;
       }
     }
     submissions[i].moveTo(tx, ty, 2000);
@@ -87,18 +92,8 @@ function draw(){
 };
 
 function keyPressed(){
-  if(sortmode){
-    for(var i=0; i<submissions.length; i++){
-      submissions[i].h = 15;
-    }
-    this.displayByYearAndScore();
-  } else {
-    for(var i=0; i<submissions.length; i++){
-      submissions[i].h = submissions[i].score * 3;
-    }
-    this.displayByYearAndScore();
-  }
   sortmode = !sortmode;
+  this.displayByYearAndScore();
 };
 
 function mousePressed(){
