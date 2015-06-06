@@ -14,6 +14,7 @@ function Submission(data){
   this.y = height + random(height);
   this.w = 20;//70;
   this.h = 15;//52;
+  this.showThumb = false;
 
   // animation variables
   this.moving = false;
@@ -27,13 +28,24 @@ Submission.prototype = {
     if(this.thumb != undefined){
       this.handleMoving();
       this.handleScaling();
-      //image(this.thumb, this.x, this.y, this.w, this.h);
-      fill(150 - (this.score / scoreHigh) * 150, 255, 255);
-      rect(this.x, this.y, this.w, this.h);
+      if(this.showThumb){
+        image(this.thumb, this.x, this.y, this.w, this.h);
+      } else {
+        fill(150 - (this.score / scoreHigh) * 150, 255, 255);
+        rect(this.x, this.y, this.w, this.h);
+      }
       stroke(0,0,255);
-      line(this.x-this.w/2, this.y+this.h/2, this.x+this.w/2, this.y+this.h/2);
+      line(this.x-this.w/2, int(this.y+this.h/2) + 0.5, this.x+this.w/2, int(this.y+this.h/2) + 0.5);
       noStroke();
     }
+  },
+
+  displayColor:function(){
+    this.showThumb = false;
+  },
+
+  displayThumb:function(){
+    this.showThumb = true;
   },
 
   handleMoving:function(){

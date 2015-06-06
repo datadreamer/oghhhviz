@@ -96,11 +96,19 @@ function keyPressed(){
   this.displayByYearAndScore();
 };
 
+function mouseReleased(){
+  for(var i=0; i<submissions.length; i++){
+    var s = submissions[i];
+    s.displayColor();
+  }
+};
+
 function mousePressed(){
   for(var i=0; i<submissions.length; i++){
     var s = submissions[i];
     if(s.isOver(mouseX, mouseY)){
       print(s.artist +" - "+ s.trackname +" ["+ s.year +"]: "+ s.score +" high: "+ scoreHigh);
+      s.displayThumb();
     }
   }
 };
