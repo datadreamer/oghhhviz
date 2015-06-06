@@ -7,6 +7,8 @@ var dtHigh;
 var scoreLow;
 var scoreHigh = -9999999999;
 var timerange, pos;
+var margin = 20;
+var sortmode = false;
 
 function preload(){
   table = loadTable("submissions.csv", "csv", "header");
@@ -14,7 +16,12 @@ function preload(){
 
 function setup(){
   createCanvas(windowWidth, windowHeight);
+  frameRate(60);
   imageMode(CENTER);
+  rectMode(CENTER);
+  noStroke();
+  fill(0,180,255,50);
+
   for (var r=0; r<table.getRowCount(); r++){
     var s =  new Submission(table.getRow(r));
     append(submissions, s);
@@ -46,36 +53,86 @@ function setup(){
 
   timerange = dtHigh - dtLow;
 
+  this.displayByYearAndScore();
+};
+
+function displayByYearAndScore(){
+  // sort by year and stack bars by score
+  print("displayByYearAndScore");
+  submissions.sort(sortByYearAndScore);
+  var currentYear = yearLow;
   for(var i=0; i<submissions.length; i++){
-    pos = (submissions[i].dt - dtLow) / timerange;
-    var tx = pos * width;
-    var ty = height - ((submissions[i].score / float(scoreHigh)) * height);
-    submissions[i].moveTo(tx, ty, 2000)
+    var tx = margin + ((submissions[i].year - yearLow) / (yearHigh-yearLow)) * (width - (margin*2));
+    var ty = 0;
+    if(submissions[i].year != currentYear){
+      currentYear = submissions[i].year;
+      ty = height - margin - submissions[i].h/2;
+    } else {
+      if(i > 0){
+        ty = (submissions[i-1].targety - submissions[i-1].h/2) - submissions[i].h/2;
+      } else {
+        ty = height - margin - submissions[i].h/2;
+      }
+    }
+    submissions[i].moveTo(tx, ty, 2000);
   }
 };
 
 function draw(){
   background(255);
+  colorMode(HSB, 255);
   for(var i=0; i<submissions.length; i++){
     submissions[i].draw();
   }
+};
+
+function keyPressed(){
+  if(sortmode){
+    for(var i=0; i<submissions.length; i++){
+      submissions[i].h = 15;
+    }
+    this.displayByYearAndScore();
+  } else {
+    for(var i=0; i<submissions.length; i++){
+      submissions[i].h = submissions[i].score * 3;
+    }
+    this.displayByYearAndScore();
+  }
+  sortmode = !sortmode;
 };
 
 function mousePressed(){
   for(var i=0; i<submissions.length; i++){
     var s = submissions[i];
     if(s.isOver(mouseX, mouseY)){
-      print(s.artist +" - "+ s.trackname +" ["+ s.year +"]");
+      print(s.artist +" - "+ s.trackname +" ["+ s.year +"]: "+ s.score +" high: "+ scoreHigh);
     }
   }
 };
 
+function sortByYearAndScore(a, b){
+  if(int(a.year) > int(b.year)){
+    return 1;
+  } else if(int(a.year) < int(b.year)){
+    return -1;
+  } else {
+    if(int(a.score) > int(b.score)){
+      return 1;
+    } else if(int(a.score) < int(b.score)){
+      return -1;
+    } else {
+      if(int(a.dt) > int(b.dt)){
+        return 1;
+      } else if(int(a.dt) < int(b.dt)){
+        return -1;
+      } else {
+        return 0;
+      }
+    }
+  }
+}
+
 function windowResized(){
   resizeCanvas(windowWidth, windowHeight);
-  for(var i=0; i<submissions.length; i++){
-    pos = (submissions[i].dt - dtLow) / timerange;
-    var tx = pos * width;
-    var ty = height - ((submissions[i].score / float(scoreHigh)) * height);
-    submissions[i].moveTo(tx, ty, 1000)
-  }
+  this.displayByYearAndScore();
 };
