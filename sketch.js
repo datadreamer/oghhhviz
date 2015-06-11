@@ -117,11 +117,16 @@ function mouseMoved(){
 }
 
 function mousePressed(){
+  if(videoPlayer != undefined){
+    if(videoPlayer.playing){
+      videoPlayer.stop();
+    }
+  }
   for(var i=0; i<submissions.length; i++){
     var s = submissions[i];
     if(s.isOver(mouseX, mouseY)){
       print(s.artist +" - "+ s.trackname +" ["+ s.year +"]: "+ s.score +", id: "+ s.id);
-      // TODO: create video player object
+      // create video player object
       videoPlayer = new VideoPlayer(s.id);
       videoPlayer.play();
     }
