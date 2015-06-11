@@ -26,9 +26,9 @@ VideoPlayer.prototype = {
         this.fading = false;
         if(this.a == 0){
           // faded out, remove shit
-          this.video = undefined;
-          this.playing = false;
-          removeElements();
+          //this.video = undefined;
+          //this.playing = false;
+          //removeElements();
         }
       } else {
         this.a = this.pasta + (this.fadeTimer.progress() * (this.targeta - this.pasta));
@@ -53,7 +53,10 @@ VideoPlayer.prototype = {
   },
 
   stop:function(){
-    //this.video.stop();
+    this.video.stop();
+    this.video = undefined;
+    this.playing = false;
+    removeElements();
     this.targeta = 0;
     this.pasta = this.a;
     this.fading = true;
