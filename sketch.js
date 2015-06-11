@@ -9,6 +9,7 @@ var scoreHigh = -9999999999;
 var timerange, pos;
 var margin = 20;
 var sortmode = false;
+var videoPlayer;
 
 function preload(){
   table = loadTable("submissions.csv", "csv", "header");
@@ -57,8 +58,6 @@ function setup(){
 };
 
 function displayByYearAndScore(){
-  // sort by year and stack bars by score/age
-  print("displayByYearAndScore");
   submissions.sort(sortByYearAndScore);
   var currentYear = yearLow;
   for(var i=0; i<submissions.length; i++){
@@ -89,6 +88,9 @@ function draw(){
   for(var i=0; i<submissions.length; i++){
     submissions[i].draw();
   }
+  if(videoPlayer != undefined){
+    videoPlayer.draw();
+  }
 };
 
 function keyPressed(){
@@ -103,12 +105,25 @@ function mouseReleased(){
   }
 };
 
+function mouseMoved(){
+  for(var i=0; i<submissions.length; i++){
+    var s = submissions[i];
+    if(s.isOver(mouseX, mouseY)){
+      s.displayThumb();
+    } else {
+      s.displayColor();
+    }
+  }
+}
+
 function mousePressed(){
   for(var i=0; i<submissions.length; i++){
     var s = submissions[i];
     if(s.isOver(mouseX, mouseY)){
-      print(s.artist +" - "+ s.trackname +" ["+ s.year +"]: "+ s.score +" high: "+ scoreHigh);
-      s.displayThumb();
+      print(s.artist +" - "+ s.trackname +" ["+ s.year +"]: "+ s.score +", id: "+ s.id);
+      // TODO: create video player object
+      videoPlayer = new VideoPlayer(s.id);
+      videoPlayer.play();
     }
   }
 };

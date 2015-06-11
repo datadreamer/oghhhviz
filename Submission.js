@@ -5,6 +5,7 @@ function Submission(data){
   this.lastupdate = data.getString(3);
   this.score = data.getString(4);
   this.url = data.getString(5);
+  this.id = this.url.split("=")[1]
   this.artist = data.getString(6);
   this.trackname = data.getString(7);
   this.year = data.getString(8);
