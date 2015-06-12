@@ -94,8 +94,14 @@ function draw(){
 };
 
 function keyPressed(){
-  sortmode = !sortmode;
-  this.displayByYearAndScore();
+  if(key == " "){
+    sortmode = !sortmode;
+    this.displayByYearAndScore();
+  } else if(key == "1"){
+    videoPlayer.aspectratio = 0.5625; // 16:9
+  } else if(key == "2"){
+    videoPlayer.aspectratio = 0.75; // 4:3
+  }
 };
 
 function mouseReleased(){

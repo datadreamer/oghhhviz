@@ -4,6 +4,7 @@ function VideoPlayer(s){
   this.playing = false;
   this.a = 0;
   this.fading = false;
+  this.aspectratio = 0.5625;
 }
 
 VideoPlayer.prototype = {
@@ -15,7 +16,7 @@ VideoPlayer.prototype = {
     rect(width/2, height/2, width, height);
     if(this.video != undefined && this.playing){
       tint(255, this.a);
-      image(this.video, width/2, height/2, width, width * 0.5625);
+      image(this.video, width/2, height/2, width, width * this.aspectratio);
     }
     fill(0, this.a * 0.5);
     rect(width/2, height - 50, width, 100);
