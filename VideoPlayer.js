@@ -1,5 +1,5 @@
-function VideoPlayer(id){
-  this.id = id;
+function VideoPlayer(s){
+  this.s = s;
   this.video;
   this.playing = false;
   this.a = 0;
@@ -17,6 +17,11 @@ VideoPlayer.prototype = {
       tint(255, this.a);
       image(this.video, width/2, height/2, width, width * 0.5625);
     }
+    fill(0, this.a * 0.5);
+    rect(width/2, height - 50, width, 100);
+    fill(255, this.a);
+    textSize(32);
+    text(this.s.artist +" - "+ this.s.trackname +" ["+ this.s.year +"]", margin, height - 50);
   },
 
   handleFading:function(){
@@ -24,12 +29,6 @@ VideoPlayer.prototype = {
       if(this.fadeTimer.isFinished()){
         this.a = this.targeta;
         this.fading = false;
-        if(this.a == 0){
-          // faded out, remove shit
-          //this.video = undefined;
-          //this.playing = false;
-          //removeElements();
-        }
       } else {
         this.a = this.pasta + (this.fadeTimer.progress() * (this.targeta - this.pasta));
       }
@@ -37,7 +36,7 @@ VideoPlayer.prototype = {
   },
 
   play:function(){
-    this.video = createVideo("youtube.py?id=" + this.id);
+    this.video = createVideo("youtube.py?id=" + this.s.url);
     this.video.play();
     this.video.hide();
     this.playing = true;

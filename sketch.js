@@ -12,7 +12,7 @@ var sortmode = false;
 var videoPlayer;
 
 function preload(){
-  table = loadTable("submissions.csv", "csv", "header");
+  table = loadTable("api.py", "csv", "header");
 };
 
 function setup(){
@@ -23,7 +23,7 @@ function setup(){
   noStroke();
   fill(0,180,255,50);
 
-  for (var r=0; r<table.getRowCount(); r++){
+  for (var r=0; r<table.getRowCount()-1; r++){
     var s =  new Submission(table.getRow(r));
     append(submissions, s);
 
@@ -127,7 +127,7 @@ function mousePressed(){
     if(s.isOver(mouseX, mouseY)){
       print(s.artist +" - "+ s.trackname +" ["+ s.year +"]: "+ s.score +", id: "+ s.id);
       // create video player object
-      videoPlayer = new VideoPlayer(s.id);
+      videoPlayer = new VideoPlayer(s);
       videoPlayer.play();
     }
   }
