@@ -13,3 +13,4 @@ while 1:
 	if not chunk:
 		break
 	sys.stdout.write(chunk)
+req.close()
