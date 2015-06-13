@@ -79,11 +79,18 @@ function displayByTime(){
   submissions.sort(sortByTime);
   var timeInADay = 86400000;
   for(var i=0; i<submissions.length; i++){
+    // day of year is for horizontal distribution
+    var day = new Date(int(submissions[i].dt + "000"));
+    day.setHours(0);
+    day.setMinutes(0);
+    day.setSeconds(0);
+    print(day.toLocaleString());
+    // of day is for vertical distribution
     var time = submissions[i].date.getHours() * 60 * 60 * 1000;
     time += submissions[i].date.getMinutes() * 60 * 1000;
     time += submissions[i].date.getSeconds() * 1000;
-    var tx = margin + ((submissions[i].dt - dtLow) / (dtHigh-dtLow)) * (width - (margin*2));
-    var ty = margin + ((time / timeInADay) * (height - (margin*2))); 
+    var tx = margin + (((day.valueOf()/1000) - dtLow) / (dtHigh-dtLow)) * (width - (margin*2));
+    var ty = margin + ((time / timeInADay) * (height - (margin*2)));
     submissions[i].moveTo(tx, ty, 2000);
   }
 }
