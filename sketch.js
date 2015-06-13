@@ -73,6 +73,7 @@ function setup(){
   }
 
   this.displayByTime();
+  this.scaleSubmissions();
 };
 
 function displayByTime(){
@@ -84,8 +85,7 @@ function displayByTime(){
     day.setHours(0);
     day.setMinutes(0);
     day.setSeconds(0);
-    print(day.toLocaleString());
-    // of day is for vertical distribution
+    // time of day is for vertical distribution
     var time = submissions[i].date.getHours() * 60 * 60 * 1000;
     time += submissions[i].date.getMinutes() * 60 * 1000;
     time += submissions[i].date.getSeconds() * 1000;
@@ -97,23 +97,10 @@ function displayByTime(){
 
 function displayByYearAndScore(){
   submissions.sort(sortByYearAndScore);
-  // fit everything on screen
-  var subH = (height - (margin*2)) / yearCountHigh;
-  var subW = subH * 1.33;
-  if(subW * (yearHigh-yearLow) > width - (margin*2)){
-    subW = (width - (margin*2)) / (yearHigh-yearLow);
-    subH = subW * 0.75;
-  }
-
   var currentYear = yearLow;
   for(var i=0; i<submissions.length; i++){
     var tx = margin + ((submissions[i].year - yearLow) / (yearHigh-yearLow)) * (width - (margin*2));
     var ty = 0;
-    if(sortmode){
-      submissions[i].scaleTo(20, submissions[i].score * 3, 2000);
-    } else {
-      submissions[i].scaleTo(subW, subH, 2000);
-    }
     if(submissions[i].year != currentYear){
       currentYear = submissions[i].year;
       ty = height - margin - submissions[i].targeth/2;
@@ -141,10 +128,14 @@ function draw(){
 
 function keyPressed(){
   if(key == "1"){
-    sortmode = !sortmode;
+    this.scaleSubmissions();
     this.displayByYearAndScore();
   } else if(key == "2"){
+    this.scaleSubmissions();
     this.displayByTime();
+  } else if(key == " "){
+    sortmode = !sortmode;
+    this.scaleSubmissions();
   } else if(key == "-"){
     videoPlayer.aspectratio = 0.5625; // 16:9
   } else if(key == "="){
@@ -183,6 +174,25 @@ function mousePressed(){
     }
   }
 };
+
+function scaleSubmissions(){
+  // fit everything on screen
+  var subH = (height - (margin*2)) / yearCountHigh;
+  var subW = subH * 1.33;
+  if(subW * (yearHigh-yearLow) > width - (margin*2)){
+    subW = (width - (margin*2)) / (yearHigh-yearLow);
+    subH = subW * 0.75;
+  }
+
+  for(var i=0; i<submissions.length; i++){
+    if(sortmode){
+      // TODO: scale total height baseed on canvas height
+      submissions[i].scaleTo(subW, submissions[i].score * 3, 2000);
+    } else {
+      submissions[i].scaleTo(subW, subH, 2000);
+    }
+  }
+}
 
 function sortByTime(a, b){
   if(int(a.dt) > int(b.dt)){
