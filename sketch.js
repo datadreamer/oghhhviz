@@ -91,7 +91,7 @@ function displayByTime(){
     time += submissions[i].date.getSeconds() * 1000;
     var tx = margin + (((day.valueOf()/1000) - dtLow) / (dtHigh-dtLow)) * (width - (margin*2));
     var ty = margin + ((time / timeInADay) * (height - (margin*2)));
-    submissions[i].moveTo(tx, ty, 2000);
+    submissions[i].moveTo(int(tx), int(ty), 2000);
   }
 }
 
@@ -111,12 +111,12 @@ function displayByYearAndScore(){
         ty = height - margin - submissions[i].targeth/2;
       }
     }
-    submissions[i].moveTo(tx, ty, 2000);
+    submissions[i].moveTo(int(tx), int(ty), 2000);
   }
 };
 
 function draw(){
-  background(255);
+  background(0);
   colorMode(HSB, 255);
   for(var i=0; i<submissions.length; i++){
     submissions[i].draw();

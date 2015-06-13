@@ -31,13 +31,13 @@ Submission.prototype = {
       this.handleMoving();
       this.handleScaling();
       if(this.showThumb){
-        image(this.thumb, this.x, this.y, this.w, this.h);
+        fill(255);
+        rect(this.x, this.y, int(this.w) + 2, int(this.h) + 2);
+        image(this.thumb, this.x, this.y, int(this.w), int(this.h));
       } else {
         fill(150 - (this.score / scoreHigh) * 150, 255, 255);
         rect(this.x, this.y, this.w, this.h);
       }
-      stroke(0,0,255);
-      line(this.x-this.w/2, int(this.y+this.h/2) + 0.5, this.x+this.w/2, int(this.y+this.h/2) + 0.5);
       noStroke();
     }
   },
