@@ -41,8 +41,10 @@ function setup(){
     // count years as they are added
     if(yearCount[s.year] == undefined){
       yearCount[s.year] = 1;
+      years[s.year] = new Year(s.year);
     } else {
       yearCount[s.year]++;
+      years[s.year].addSubmission(s);
     }
 
     // get time range

@@ -23,6 +23,12 @@ VideoPlayer.prototype = {
       fill(255, this.a);
       textSize(32);
       text(this.s.artist +" - "+ this.s.trackname +" ["+ this.s.year +"]", margin, height - 50);
+      fill(150, this.a);
+      textSize(18);
+      textAlign(RIGHT);
+      text("Submitted by "+ this.s.user, width - margin, height - 70);
+      text(this.s.date, width - margin, height - 50);
+      text("Score: "+ this.s.score, width - margin, height - 30);
     }
   },
 
