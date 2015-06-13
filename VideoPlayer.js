@@ -1,9 +1,8 @@
-function VideoPlayer(s){
-  this.s = s;
+function VideoPlayer(){
   this.video;
   this.playing = false;
-  this.a = 0;
   this.fading = false;
+  this.a = 0;
   this.aspectratio = 0.5625;
 }
 
@@ -12,17 +11,19 @@ VideoPlayer.prototype = {
 
   draw:function(){
     this.handleFading();
-    fill(0, this.a);
-    rect(width/2, height/2, width, height);
-    if(this.video != undefined && this.playing){
-      tint(255, this.a);
-      image(this.video, width/2, height/2, width, width * this.aspectratio);
+    if(this.s != undefined){
+      fill(0, this.a);
+      rect(width/2, height/2, width, height);
+      if(this.video != undefined && this.playing){
+        tint(255, this.a);
+        image(this.video, width/2, height/2, width, width * this.aspectratio);
+      }
+      fill(0, this.a * 0.5);
+      rect(width/2, height - 50, width, 100);
+      fill(255, this.a);
+      textSize(32);
+      text(this.s.artist +" - "+ this.s.trackname +" ["+ this.s.year +"]", margin, height - 50);
     }
-    fill(0, this.a * 0.5);
-    rect(width/2, height - 50, width, 100);
-    fill(255, this.a);
-    textSize(32);
-    text(this.s.artist +" - "+ this.s.trackname +" ["+ this.s.year +"]", margin, height - 50);
   },
 
   handleFading:function(){
@@ -36,7 +37,8 @@ VideoPlayer.prototype = {
     }
   },
 
-  play:function(){
+  play:function(s){
+    this.s = s;
     this.video = createVideo("youtube.py?id=" + this.s.url);
     this.video.play();
     this.video.hide();

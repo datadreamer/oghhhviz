@@ -1,7 +1,10 @@
 var table;
 var submissions = new Array();
+var yearCount = new Array();
+var years = new Array();
 var yearLow;
 var yearHigh;
+var yearCountHigh = 0;
 var dtLow;
 var dtHigh;
 var scoreLow;
@@ -9,7 +12,7 @@ var scoreHigh = -9999999999;
 var timerange, pos;
 var margin = 20;
 var sortmode = false;
-var videoPlayer;
+var videoPlayer = new VideoPlayer();;
 
 function preload(){
   table = loadTable("api.py", "csv", "header");
@@ -35,6 +38,13 @@ function setup(){
       yearHigh = s.year;
     }
 
+    // count years as they are added
+    if(yearCount[s.year] == undefined){
+      yearCount[s.year] = 1;
+    } else {
+      yearCount[s.year]++;
+    }
+
     // get time range
     if(int(s.dt) < dtLow || dtLow == undefined){
       dtLow = s.dt;
@@ -54,11 +64,21 @@ function setup(){
 
   timerange = dtHigh - dtLow;
 
+  for(var y=0; y<yearCount.length; y++){
+    if(yearCount[y] > yearCountHigh){
+      yearCountHigh = yearCount[y];
+    }
+  }
+  print("Highest submissions per year: "+ yearCountHigh);
+
   this.displayByYearAndScore();
 };
 
 function displayByYearAndScore(){
   submissions.sort(sortByYearAndScore);
+  // fit everything on screen
+  var subH = (height - (margin*2)) / yearCountHigh;
+  var subW = subH * 1.33;
   var currentYear = yearLow;
   for(var i=0; i<submissions.length; i++){
     var tx = margin + ((submissions[i].year - yearLow) / (yearHigh-yearLow)) * (width - (margin*2));
@@ -66,7 +86,7 @@ function displayByYearAndScore(){
     if(sortmode){
       submissions[i].scaleTo(20, submissions[i].score * 3, 2000);
     } else {
-      submissions[i].scaleTo(20, 15, 2000);
+      submissions[i].scaleTo(subW, subH, 2000);
     }
     if(submissions[i].year != currentYear){
       currentYear = submissions[i].year;
@@ -123,18 +143,15 @@ function mouseMoved(){
 }
 
 function mousePressed(){
-  if(videoPlayer != undefined){
-    if(videoPlayer.playing){
-      videoPlayer.stop();
-    }
-  }
-  for(var i=0; i<submissions.length; i++){
-    var s = submissions[i];
-    if(s.isOver(mouseX, mouseY)){
-      print(s.artist +" - "+ s.trackname +" ["+ s.year +"]: "+ s.score +", id: "+ s.id);
-      // create video player object
-      videoPlayer = new VideoPlayer(s);
-      videoPlayer.play();
+  if(videoPlayer.playing){
+    videoPlayer.stop();
+  } else {
+    for(var i=0; i<submissions.length; i++){
+      var s = submissions[i];
+      if(s.isOver(mouseX, mouseY)){
+        print(s.artist +" - "+ s.trackname +" ["+ s.year +"]: "+ s.score +", id: "+ s.url);
+        videoPlayer.play(s);
+      }
     }
   }
 };

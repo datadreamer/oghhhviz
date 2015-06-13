@@ -12,8 +12,8 @@ function Submission(data){
   this.thumb = loadImage("thumbs/"+this.name+".jpg", this.imageLoaded, this.imageError);
   this.x = random(width);
   this.y = height + random(height);
-  this.w = 20;//70;
-  this.h = 15;//52;
+  this.w = 20;
+  this.h = 15;
   this.showThumb = false;
 
   // animation variables
@@ -77,7 +77,7 @@ Submission.prototype = {
   },
 
   imageError:function(){
-    loadImage("thumbs/default.jpg");
+    //loadImage("thumbs/default.jpg");
   },
 
   imageLoaded:function(){
