@@ -81,6 +81,11 @@ function displayByYearAndScore(){
   // fit everything on screen
   var subH = (height - (margin*2)) / yearCountHigh;
   var subW = subH * 1.33;
+  if(subW * (yearHigh-yearLow) > width - (margin*2)){
+    subW = (width - (margin*2)) / (yearHigh-yearLow);
+    subH = subW * 0.75;
+  }
+
   var currentYear = yearLow;
   for(var i=0; i<submissions.length; i++){
     var tx = margin + ((submissions[i].year - yearLow) / (yearHigh-yearLow)) * (width - (margin*2));
