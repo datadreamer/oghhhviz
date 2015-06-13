@@ -71,10 +71,22 @@ function setup(){
       yearCountHigh = yearCount[y];
     }
   }
-  print("Highest submissions per year: "+ yearCountHigh);
 
-  this.displayByYearAndScore();
+  this.displayByTime();
 };
+
+function displayByTime(){
+  submissions.sort(sortByTime);
+  var timeInADay = 86400000;
+  for(var i=0; i<submissions.length; i++){
+    var time = submissions[i].date.getHours() * 60 * 60 * 1000;
+    time += submissions[i].date.getMinutes() * 60 * 1000;
+    time += submissions[i].date.getSeconds() * 1000;
+    var tx = margin + ((submissions[i].dt - dtLow) / (dtHigh-dtLow)) * (width - (margin*2));
+    var ty = margin + ((time / timeInADay) * (height - (margin*2))); 
+    submissions[i].moveTo(tx, ty, 2000);
+  }
+}
 
 function displayByYearAndScore(){
   submissions.sort(sortByYearAndScore);
@@ -121,12 +133,14 @@ function draw(){
 };
 
 function keyPressed(){
-  if(key == " "){
+  if(key == "1"){
     sortmode = !sortmode;
     this.displayByYearAndScore();
-  } else if(key == "1"){
-    videoPlayer.aspectratio = 0.5625; // 16:9
   } else if(key == "2"){
+    this.displayByTime();
+  } else if(key == "-"){
+    videoPlayer.aspectratio = 0.5625; // 16:9
+  } else if(key == "="){
     videoPlayer.aspectratio = 0.75; // 4:3
   }
 };
@@ -162,6 +176,16 @@ function mousePressed(){
     }
   }
 };
+
+function sortByTime(a, b){
+  if(int(a.dt) > int(b.dt)){
+    return 1;
+  } else if(int(a.dt) < int(b.dt)){
+    return -1;
+  } else {
+    return 0;
+  }
+}
 
 function sortByYearAndScore(a, b){
   if(int(a.year) > int(b.year)){

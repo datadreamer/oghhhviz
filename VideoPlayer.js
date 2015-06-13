@@ -27,7 +27,7 @@ VideoPlayer.prototype = {
       textSize(18);
       textAlign(RIGHT);
       text("Submitted by "+ this.s.user, width - margin, height - 70);
-      text(this.s.date, width - margin, height - 50);
+      text(this.s.dateString, width - margin, height - 50);
       text("Score: "+ this.s.score, width - margin, height - 30);
     }
   },

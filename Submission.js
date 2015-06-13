@@ -1,7 +1,8 @@
 function Submission(data){
   this.name = data.getString(0);
   this.dt = data.getString(1);
-  this.date = new Date(int(this.dt + "000")).toLocaleString();
+  this.date = new Date(int(this.dt + "000"));
+  this.dateString = this.date.toLocaleString();
   this.user = data.getString(2);
   this.lastupdate = data.getString(3);
   this.score = data.getString(4);
